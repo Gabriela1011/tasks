@@ -3,6 +3,7 @@ package com.example.tasks.service;
 import com.example.tasks.dto.TaskDTO;
 import com.example.tasks.dto.UpdateTaskContentDTO;
 import com.example.tasks.dto.UpdateTaskDTO;
+import com.example.tasks.exception.TaskNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class TaskService {
             }
         }
         log.warn("Task with id {} not found for update its content", id);
-        return null; //exception
+        throw new TaskNotFoundException(id);
     }
 
     public TaskDTO updateTask(UpdateTaskDTO task, Long id) {
@@ -55,7 +56,7 @@ public class TaskService {
             }
         }
         log.warn("Task with id {} not found for update", id);
-        return null; //exception
+        throw new TaskNotFoundException(id);
     }
 
     public void deleteTask(Long id) {
@@ -63,7 +64,7 @@ public class TaskService {
 
         if(!removed){
             log.warn("Task with id {} not found for deletion", id);
-            return; //exception
+            throw new TaskNotFoundException(id);
         }
 
         log.info("Deleted task with id {}", id);
