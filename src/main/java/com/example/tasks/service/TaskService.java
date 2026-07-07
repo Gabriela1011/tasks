@@ -1,5 +1,6 @@
 package com.example.tasks.service;
 
+import com.example.tasks.dto.request.UpdateTaskStatusDTO;
 import com.example.tasks.dto.response.TaskDTO;
 import com.example.tasks.dto.request.UpdateTaskContentDTO;
 import com.example.tasks.dto.request.UpdateTaskDTO;
@@ -21,15 +22,10 @@ public class TaskService {
     }
 
     public TaskDTO getTaskById(Long id) {
-        for(TaskDTO existingTask : tasks){
-            if(existingTask.getId().equals(id)) {
-                log.info("Found task with id {}: {}", id, existingTask);
-                return existingTask;
-            }
-        }
+        TaskDTO existingTask = findTaskOrThrow(id);
 
-        log.warn("Task with id {} not found", id);
-        throw new TaskNotFoundException(id);
+        log.info("Found task with id {}: {}", id, existingTask);
+        return existingTask;
     }
 
     public TaskDTO addTask(TaskDTO taskDTO) {
@@ -48,34 +44,35 @@ public class TaskService {
             tasks.add(builtTask);
             createdTasks.add(builtTask);
         }
+
         log.info("Added tasks: {}", createdTasks);
         return createdTasks;
     }
 
-    public TaskDTO updateTaskContent(UpdateTaskContentDTO task, Long id) {
-        for (TaskDTO existingTask : tasks) {
-            if (existingTask.getId().equals(id)) {
-                existingTask.setContent(task.getContent());
-                log.info("Updated task content with id {}: {}", id, existingTask);
-                return existingTask;
-            }
-        }
-        log.warn("Task with id {} not found for update its content", id);
-        throw new TaskNotFoundException(id);
+    public TaskDTO updateTask(UpdateTaskDTO task, Long id) {
+        TaskDTO existingTask = findTaskOrThrow(id);
+        existingTask.setContent(task.getContent());
+        existingTask.setDueDate(task.getDueDate());
+        existingTask.setStatus(task.getStatus());
+
+        log.info("Updated task with id {}: {}", id, existingTask);
+        return existingTask;
     }
 
-    public TaskDTO updateTask(UpdateTaskDTO task, Long id) {
-        for (TaskDTO existingTask : tasks) {
-            if (existingTask.getId().equals(id)) {
-                existingTask.setContent(task.getContent());
-                existingTask.setDueDate(task.getDueDate());
-                existingTask.setStatus(task.getStatus());
-                log.info("Updated task with id {}: {}", id, existingTask);
-                return existingTask;
-            }
-        }
-        log.warn("Task with id {} not found for update", id);
-        throw new TaskNotFoundException(id);
+    public TaskDTO updateTaskContent(UpdateTaskContentDTO task, Long id) {
+        TaskDTO existingTask = findTaskOrThrow(id);
+        existingTask.setContent(task.getContent());
+
+        log.info("Updated task content with id {}: {}", id, existingTask);
+        return existingTask;
+    }
+
+    public TaskDTO updateTaskStatus(UpdateTaskStatusDTO task, Long id) {
+        TaskDTO existingTask = findTaskOrThrow(id);
+        existingTask.setStatus(task.getStatus());
+
+        log.info("Updated task status with id {}: {}", id, existingTask);
+        return existingTask;
     }
 
     public void deleteTask(Long id) {
@@ -98,6 +95,13 @@ public class TaskService {
                 .build();
     }
 
-
-
+    private TaskDTO findTaskOrThrow(Long id) {
+        return tasks.stream()
+                .filter(task -> task.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> {
+                    log.warn("Task with id {} not found", id);
+                    return new TaskNotFoundException(id);
+                });
+    }
 }

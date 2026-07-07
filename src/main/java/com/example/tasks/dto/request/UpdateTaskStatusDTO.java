@@ -1,16 +1,11 @@
 package com.example.tasks.dto.request;
 
-
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class UpdateTaskDTO {
-    private String content;
-    private LocalDateTime dueDate;
+public class UpdateTaskStatusDTO {
     private String status;
 }

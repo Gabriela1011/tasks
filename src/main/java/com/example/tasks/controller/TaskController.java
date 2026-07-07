@@ -1,5 +1,6 @@
 package com.example.tasks.controller;
 
+import com.example.tasks.dto.request.UpdateTaskStatusDTO;
 import com.example.tasks.dto.response.TaskDTO;
 import com.example.tasks.dto.request.UpdateTaskContentDTO;
 import com.example.tasks.dto.request.UpdateTaskDTO;
@@ -41,15 +42,19 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTasks);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskDTO> updateTask(@RequestBody UpdateTaskDTO task, @PathVariable Long id) {
+        return ResponseEntity.ok(taskService.updateTask(task, id));
+    }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/content")
     public ResponseEntity<TaskDTO> updateTaskContent(@RequestBody UpdateTaskContentDTO task, @PathVariable Long id) {
         return ResponseEntity.ok(taskService.updateTaskContent(task, id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TaskDTO> updateTask(@RequestBody UpdateTaskDTO task, @PathVariable Long id) {
-        return ResponseEntity.ok(taskService.updateTask(task, id));
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TaskDTO> updateTaskStatus(@RequestBody UpdateTaskStatusDTO task, @PathVariable Long id) {
+        return ResponseEntity.ok(taskService.updateTaskStatus(task, id));
     }
 
     @DeleteMapping("/{id}")
