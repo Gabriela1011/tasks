@@ -1,8 +1,8 @@
 package com.example.tasks.service;
 
-import com.example.tasks.dto.TaskDTO;
-import com.example.tasks.dto.UpdateTaskContentDTO;
-import com.example.tasks.dto.UpdateTaskDTO;
+import com.example.tasks.dto.response.TaskDTO;
+import com.example.tasks.dto.request.UpdateTaskContentDTO;
+import com.example.tasks.dto.request.UpdateTaskDTO;
 import com.example.tasks.exception.TaskNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,26 @@ public class TaskService {
         return tasks;
     }
 
+    public TaskDTO getTaskById(Long id) {
+        for(TaskDTO existingTask : tasks){
+            if(existingTask.getId().equals(id)) {
+                log.info("Found task with id {}: {}", id, existingTask);
+                return existingTask;
+            }
+        }
+
+        log.warn("Task with id {} not found", id);
+        throw new TaskNotFoundException(id);
+    }
+
+    public TaskDTO addTask(TaskDTO taskDTO) {
+        TaskDTO builtTask = buildTask(taskDTO);
+        tasks.add(builtTask);
+
+        log.info("Added task: {}", builtTask);
+        return builtTask;
+    }
+
     public List<TaskDTO> addTasks(List<TaskDTO> tasksList) {
         List<TaskDTO> createdTasks = new ArrayList<>();
 
@@ -27,9 +47,8 @@ public class TaskService {
             TaskDTO builtTask = buildTask(task);
             tasks.add(builtTask);
             createdTasks.add(builtTask);
-            log.info("Added task: {}", builtTask);
         }
-
+        log.info("Added tasks: {}", createdTasks);
         return createdTasks;
     }
 
