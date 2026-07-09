@@ -1,5 +1,6 @@
 package com.example.tasks.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -7,5 +8,5 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class UpdateTaskStatusDTO {
-    private String status;
+    @NotBlank private String status;
 }
