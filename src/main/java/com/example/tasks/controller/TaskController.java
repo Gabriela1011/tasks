@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -24,6 +25,14 @@ public class TaskController {
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getTasks() {
         return ResponseEntity.ok(taskService.getTasks());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<TaskDTO>> searchTasks(
+            @RequestParam(required = false) LocalDateTime dueBefore,
+            @RequestParam(required = false) String status) {
+
+        return ResponseEntity.ok(taskService.searchTasks(dueBefore, status));
     }
 
     @GetMapping("/{id}")

@@ -4,10 +4,13 @@ import com.example.tasks.dto.request.UpdateTaskStatusDTO;
 import com.example.tasks.dto.response.TaskDTO;
 import com.example.tasks.dto.request.UpdateTaskContentDTO;
 import com.example.tasks.dto.request.UpdateTaskDTO;
+import com.example.tasks.exception.NoSearchCriteriaProvidedException;
 import com.example.tasks.exception.TaskNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,23 @@ public class TaskService {
         log.info("Getting tasks: ");
         return tasks;
     }
+
+    public List<TaskDTO> searchTasks(LocalDateTime dueBefore, String status) {
+        boolean hasDueBefore = (dueBefore != null);
+        boolean hasStatus = StringUtils.hasText(status);
+
+        if(!hasDueBefore && !hasStatus) {
+            throw new NoSearchCriteriaProvidedException();
+        }
+
+        List<TaskDTO> filteredTasks = tasks.stream()
+                                .filter(task -> !hasDueBefore || task.getDueDate().isBefore(dueBefore))
+                                .filter(task -> !hasStatus || task.getStatus().equals(status))
+                                .toList();
+
+        log.info("Found {} tasks matching search criteria", filteredTasks.size());
+        return filteredTasks;
+        }
 
     public TaskDTO getTaskById(Long id) {
         TaskDTO existingTask = findTaskOrThrow(id);
