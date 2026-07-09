@@ -62,4 +62,10 @@ public class TaskController {
          taskService.deleteTask(id);
          return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllTasks() {
+        taskService.deleteAllTasks();
+        return ResponseEntity.noContent().build();
+    }
 }

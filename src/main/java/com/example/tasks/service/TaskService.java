@@ -86,6 +86,12 @@ public class TaskService {
         log.info("Deleted task with id {}", id);
     }
 
+    public void deleteAllTasks() {
+        int deletedCount = tasks.size();
+        tasks.clear();
+        log.info("Deleted all tasks. Count: {}", deletedCount);
+    }
+
     private TaskDTO buildTask(TaskDTO task) {
         return TaskDTO.builder()
                 .id(task.getId())
