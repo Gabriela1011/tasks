@@ -1,6 +1,7 @@
 package com.example.tasks.service;
 
 import com.example.tasks.domain.StatusType;
+import com.example.tasks.dto.request.CreateStatusTypeDTO;
 import com.example.tasks.dto.response.StatusTypeDTO;
 import com.example.tasks.mapper.StatusTypeMapper;
 import com.example.tasks.repository.StatusTypeRepository;
@@ -27,8 +28,8 @@ public class StatusTypeService {
     }
 
     @Transactional
-    public StatusTypeDTO createStatus(StatusTypeDTO statusTypeDTO) {
-        StatusType status = statusTypeMapper.toEntity(statusTypeDTO);
+    public StatusTypeDTO createStatus(CreateStatusTypeDTO dto) {
+        StatusType status = statusTypeMapper.toEntity(dto);
         StatusType savedStatus = statusTypeRepository.save(status);
 
         log.info("Status created!");

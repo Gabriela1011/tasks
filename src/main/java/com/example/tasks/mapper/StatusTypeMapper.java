@@ -1,6 +1,7 @@
 package com.example.tasks.mapper;
 
 import com.example.tasks.domain.StatusType;
+import com.example.tasks.dto.request.CreateStatusTypeDTO;
 import com.example.tasks.dto.response.StatusTypeDTO;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +17,10 @@ public class StatusTypeMapper {
                 .build();
     }
 
-    public StatusType toEntity(StatusTypeDTO statusTypeDTO) {
+    public StatusType toEntity(CreateStatusTypeDTO dto) {
         return StatusType.builder()
-                .statusName(statusTypeDTO.getStatusName())
-                .createdBy(statusTypeDTO.getCreatedBy())
+                .statusName(dto.getStatusName())
+                .createdBy(dto.getCreatedBy())
                 .build();
     }
 }

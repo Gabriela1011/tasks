@@ -39,7 +39,7 @@ public class TaskService {
 
         log.info("Found {} tasks matching search criteria", filteredTasks.size());
         return filteredTasks;
-        }
+    }
 
     public TaskDTO getTaskById(Long id) {
         TaskDTO existingTask = findTaskOrThrow(id);

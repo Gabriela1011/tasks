@@ -19,10 +19,10 @@ public class StatusType {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String statusTypeId;
 
-    @Column(name = "status_name", nullable = false)
+    @Column(name = "status_name", length = 255, nullable = false)
     private String statusName;
 
-    @Column(name = "created_by")
+    @Column(name = "created_by", length = 50)
     private String createdBy;
 
     @Column(name = "creation_date")

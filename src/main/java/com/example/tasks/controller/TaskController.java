@@ -57,7 +57,6 @@ public class TaskController {
         return ResponseEntity.ok(taskService.updateTask(task, id));
     }
 
-    //TODO: mai intai content si dupa id
     @PatchMapping("/{id}/content")
     public ResponseEntity<TaskDTO> updateTaskContent(@Valid @RequestBody UpdateTaskContentDTO task, @PathVariable Long id) {
         return ResponseEntity.ok(taskService.updateTaskContent(task, id));

@@ -1,8 +1,11 @@
 package com.example.tasks.controller;
 
+import com.example.tasks.dto.request.CreateStatusTypeDTO;
 import com.example.tasks.dto.response.StatusTypeDTO;
 import com.example.tasks.service.StatusTypeService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,12 +20,13 @@ public class StatusTypeController {
     }
 
     @GetMapping
-    public List<StatusTypeDTO> getAllStatuses() {
-        return statusTypeService.getAllStatuses();
+    public ResponseEntity<List<StatusTypeDTO>> getAllStatuses() {
+        return ResponseEntity.ok(statusTypeService.getAllStatuses());
     }
 
     @PostMapping
-    public StatusTypeDTO createStatus(@Valid @RequestBody StatusTypeDTO statusTypeDTO) {
-        return statusTypeService.createStatus(statusTypeDTO);
+    public ResponseEntity<StatusTypeDTO> createStatus(@Valid @RequestBody CreateStatusTypeDTO dto) {
+        StatusTypeDTO createdStatus =  statusTypeService.createStatus(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdStatus);
     }
 }
