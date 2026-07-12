@@ -1,6 +1,7 @@
 package com.example.tasks.controller;
 
-import com.example.tasks.dto.request.SaveUserDTO;
+import com.example.tasks.dto.request.CreateUserDTO;
+import com.example.tasks.dto.request.UpdateUserDTO;
 import com.example.tasks.dto.response.UserDTO;
 import com.example.tasks.service.UserService;
 import jakarta.validation.Valid;
@@ -25,8 +26,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody SaveUserDTO user) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO user) {
         UserDTO createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UpdateUserDTO user, @PathVariable Long id) {
+        return ResponseEntity.ok(userService.updateUser(user, id));
     }
 }

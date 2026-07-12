@@ -5,7 +5,7 @@ import com.example.tasks.dto.request.UpdateTaskContentDTO;
 import com.example.tasks.dto.request.UpdateTaskDTO;
 import com.example.tasks.dto.request.UpdateTaskStatusDTO;
 import com.example.tasks.dto.response.TaskDTO;
-import com.example.tasks.exception.NoSearchCriteriaProvidedException;
+import com.example.tasks.exception.NoFieldsProvidedException;
 import com.example.tasks.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class TaskService {
         boolean hasStatus = StringUtils.hasText(status);
 
         if(!hasDueBefore && !hasStatus) {
-            throw new NoSearchCriteriaProvidedException();
+            throw new NoFieldsProvidedException("At least one search criterion must be provided");
         }
 
         List<TaskDTO> filteredTasks = tasks.stream()

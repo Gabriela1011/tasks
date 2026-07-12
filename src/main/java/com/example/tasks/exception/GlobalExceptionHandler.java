@@ -33,8 +33,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(httpStatus).body(error);
     }
 
-    @ExceptionHandler(NoSearchCriteriaProvidedException.class)
-    public ResponseEntity<ErrorResponse> handleNoSearchCriteriaProvidedException(NoSearchCriteriaProvidedException ex) {
+    @ExceptionHandler(NoFieldsProvidedException.class)
+    public ResponseEntity<ErrorResponse> handleNoSearchCriteriaProvidedException(NoFieldsProvidedException ex) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         ErrorResponse error = buildErrorResponse(httpStatus, ex.getMessage());
 
