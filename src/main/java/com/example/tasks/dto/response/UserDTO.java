@@ -2,6 +2,7 @@ package com.example.tasks.dto.response;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -9,9 +10,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StatusTypeDTO {
-    private String statusTypeId;
-    private String statusName;
+public class UserDTO {
+    private Long userId;
+    private String username;
+    private LocalDate birthDate;
+    private Boolean isInternal;
     private String createdBy;
     private LocalDateTime creationDate;
     private String lastUpdatedBy;

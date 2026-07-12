@@ -16,6 +16,7 @@ public class StatusTypeMapper {
                 .creationDate(statusType.getCreationDate())
                 .lastUpdatedBy(statusType.getLastUpdatedBy())
                 .lastUpdateDate(statusType.getLastUpdateDate())
+                .createdByFullname(statusType.getCreatedByFullname())
                 .build();
     }
 
