@@ -55,4 +55,14 @@ public class UserService {
         log.info("Updated user with id {}: {}", id, user);
         return userMapper.toDto(user);
     }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        if(!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException(User.class, id);
+        }
+
+        userRepository.deleteById(id);
+        log.info("Deleted user with id {}", id);
+    }
 }
