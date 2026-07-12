@@ -14,4 +14,6 @@ public class StatusTypeDTO {
     private String statusName;
     private String createdBy;
     private LocalDateTime creationDate;
+    private String lastUpdatedBy;
+    private LocalDateTime lastUpdateDate;
 }

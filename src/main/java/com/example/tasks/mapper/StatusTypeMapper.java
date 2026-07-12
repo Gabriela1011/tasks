@@ -14,13 +14,14 @@ public class StatusTypeMapper {
                 .statusName(statusType.getStatusName())
                 .createdBy(statusType.getCreatedBy())
                 .creationDate(statusType.getCreationDate())
+                .lastUpdatedBy(statusType.getLastUpdatedBy())
+                .lastUpdateDate(statusType.getLastUpdateDate())
                 .build();
     }
 
     public StatusType toEntity(CreateStatusTypeDTO dto) {
         return StatusType.builder()
                 .statusName(dto.getStatusName())
-                .createdBy(dto.getCreatedBy())
                 .build();
     }
 }

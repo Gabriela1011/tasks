@@ -15,8 +15,4 @@ public class CreateStatusTypeDTO {
     @NotBlank
     @Size(max = 255)
     private String statusName;
-
-    @NotBlank
-    @Size(max = 50)
-    private String createdBy;
 }

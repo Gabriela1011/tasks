@@ -25,8 +25,8 @@ public class StatusTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<StatusTypeDTO> createStatus(@Valid @RequestBody CreateStatusTypeDTO dto) {
-        StatusTypeDTO createdStatus =  statusTypeService.createStatus(dto);
+    public ResponseEntity<StatusTypeDTO> createStatus(@Valid @RequestBody CreateStatusTypeDTO status) {
+        StatusTypeDTO createdStatus =  statusTypeService.createStatus(status);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdStatus);
     }
 }
