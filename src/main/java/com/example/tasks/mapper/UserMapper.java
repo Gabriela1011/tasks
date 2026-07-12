@@ -1,7 +1,7 @@
 package com.example.tasks.mapper;
 
 import com.example.tasks.domain.User;
-import com.example.tasks.dto.request.CreateUserDTO;
+import com.example.tasks.dto.request.SaveUserDTO;
 import com.example.tasks.dto.response.UserDTO;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ public class UserMapper {
                 .build();
     }
 
-    public User toEntity(CreateUserDTO dto) {
+    public User toEntity(SaveUserDTO dto) {
         return User.builder()
                 .username(dto.getUsername())
                 .birthDate(dto.getBirthDate())

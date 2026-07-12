@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(TaskNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleTaskNotFoundException(TaskNotFoundException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTaskNotFoundException(ResourceNotFoundException ex) {
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
         ErrorResponse error = buildErrorResponse(httpStatus, ex.getMessage());
 

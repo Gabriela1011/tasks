@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @ToString
-public class CreateUserDTO {
+public class SaveUserDTO {
 
     @NotBlank
     @Size(max = 500)

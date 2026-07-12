@@ -1,7 +1,7 @@
 package com.example.tasks.service;
 
 import com.example.tasks.domain.User;
-import com.example.tasks.dto.request.CreateUserDTO;
+import com.example.tasks.dto.request.SaveUserDTO;
 import com.example.tasks.dto.response.UserDTO;
 import com.example.tasks.mapper.UserMapper;
 import com.example.tasks.repository.UserRepository;
@@ -28,7 +28,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO createUser(CreateUserDTO dto){
+    public UserDTO createUser(SaveUserDTO dto){
         User user = userMapper.toEntity(dto);
         User savedUser = userRepository.save(user);
 

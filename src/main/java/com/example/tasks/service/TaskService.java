@@ -1,11 +1,12 @@
 package com.example.tasks.service;
 
-import com.example.tasks.dto.request.UpdateTaskStatusDTO;
-import com.example.tasks.dto.response.TaskDTO;
+import com.example.tasks.domain.Task;
 import com.example.tasks.dto.request.UpdateTaskContentDTO;
 import com.example.tasks.dto.request.UpdateTaskDTO;
+import com.example.tasks.dto.request.UpdateTaskStatusDTO;
+import com.example.tasks.dto.response.TaskDTO;
 import com.example.tasks.exception.NoSearchCriteriaProvidedException;
-import com.example.tasks.exception.TaskNotFoundException;
+import com.example.tasks.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -100,7 +101,7 @@ public class TaskService {
 
         if(!removed){
             log.warn("Task with id {} not found for deletion", id);
-            throw new TaskNotFoundException(id);
+            throw new ResourceNotFoundException(Task.class, id);
         }
 
         log.info("Deleted task with id {}", id);
@@ -127,7 +128,7 @@ public class TaskService {
                 .findFirst()
                 .orElseThrow(() -> {
                     log.warn("Task with id {} not found", id);
-                    return new TaskNotFoundException(id);
+                    return new ResourceNotFoundException(Task.class, id);
                 });
     }
 }

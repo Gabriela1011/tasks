@@ -1,6 +1,6 @@
 package com.example.tasks.controller;
 
-import com.example.tasks.dto.request.CreateUserDTO;
+import com.example.tasks.dto.request.SaveUserDTO;
 import com.example.tasks.dto.response.UserDTO;
 import com.example.tasks.service.UserService;
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO user) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody SaveUserDTO user) {
         UserDTO createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
