@@ -3,6 +3,7 @@ package com.example.tasks.controller;
 import com.example.tasks.dto.request.CreateTaskDTO;
 import com.example.tasks.dto.request.UpdateTaskDTO;
 import com.example.tasks.dto.request.UpdateTaskStatusDTO;
+import com.example.tasks.dto.response.StatusCountDTO;
 import com.example.tasks.dto.response.TaskDTO;
 import com.example.tasks.service.TaskService;
 import jakarta.validation.Valid;
@@ -38,6 +39,11 @@ public class TaskController {
             @RequestParam(required = false) String status) {
 
         return ResponseEntity.ok(taskService.searchTasks(dueBefore, status));
+    }
+
+    @GetMapping("/users/{userId}/status-counts")
+    public ResponseEntity<List<StatusCountDTO>> countTasksByStatusForUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(taskService.countTasksByStatusForUser(userId));
     }
 
     @PostMapping

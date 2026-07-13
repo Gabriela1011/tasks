@@ -6,6 +6,7 @@ import com.example.tasks.domain.User;
 import com.example.tasks.dto.request.CreateTaskDTO;
 import com.example.tasks.dto.request.UpdateTaskDTO;
 import com.example.tasks.dto.request.UpdateTaskStatusDTO;
+import com.example.tasks.dto.response.StatusCountDTO;
 import com.example.tasks.dto.response.TaskDTO;
 import com.example.tasks.exception.NoFieldsProvidedException;
 import com.example.tasks.exception.ResourceNotFoundException;
@@ -70,6 +71,16 @@ public class TaskService {
 
         log.info("Found {} tasks matching search criteria", filteredTasks.size());
         return filteredTasks;
+    }
+
+    public List<StatusCountDTO> countTasksByStatusForUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException(User.class, userId);
+        }
+
+        List<StatusCountDTO> result = taskRepository.countTasksByStatusForUser(userId);
+        log.info("User {} has tasks in {} distinct statuses", userId, result.size());
+        return result;
     }
 
 
