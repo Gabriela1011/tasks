@@ -1,6 +1,6 @@
 package com.example.tasks.controller;
 
-import com.example.tasks.dto.request.UpdateTaskContentDTO;
+import com.example.tasks.dto.request.CreateTaskDTO;
 import com.example.tasks.dto.request.UpdateTaskDTO;
 import com.example.tasks.dto.request.UpdateTaskStatusDTO;
 import com.example.tasks.dto.response.TaskDTO;
@@ -27,6 +27,11 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getTasks());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.getTaskById(id));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<TaskDTO>> searchTasks(
             @RequestParam(required = false) LocalDateTime dueBefore,
@@ -35,31 +40,21 @@ public class TaskController {
         return ResponseEntity.ok(taskService.searchTasks(dueBefore, status));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
-        return ResponseEntity.ok(taskService.getTaskById(id));
-    }
-
     @PostMapping
-    public ResponseEntity<TaskDTO> addTask(@Valid @RequestBody TaskDTO task) {
+    public ResponseEntity<TaskDTO> addTask(@Valid @RequestBody CreateTaskDTO task) {
         TaskDTO createdTask = taskService.addTask(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
     }
 
     @PostMapping("/batch")
-    public ResponseEntity<List<TaskDTO>> addTasks(@Valid @RequestBody List<TaskDTO> tasksList) {
+    public ResponseEntity<List<TaskDTO>> addTasks( @RequestBody List<@Valid CreateTaskDTO> tasksList) {
         List<TaskDTO> createdTasks =  taskService.addTasks(tasksList);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTasks);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<TaskDTO> updateTask(@Valid @RequestBody UpdateTaskDTO task, @PathVariable Long id) {
         return ResponseEntity.ok(taskService.updateTask(task, id));
-    }
-
-    @PatchMapping("/{id}/content")
-    public ResponseEntity<TaskDTO> updateTaskContent(@Valid @RequestBody UpdateTaskContentDTO task, @PathVariable Long id) {
-        return ResponseEntity.ok(taskService.updateTaskContent(task, id));
     }
 
     @PatchMapping("/{id}/status")

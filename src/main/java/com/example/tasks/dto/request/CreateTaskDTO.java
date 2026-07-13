@@ -1,6 +1,6 @@
 package com.example.tasks.dto.request;
 
-
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +13,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @ToString
-public class UpdateTaskDTO {
+public class CreateTaskDTO {
 
+    @NotBlank
     @Size(max = 500)
     private String taskName;
 
@@ -22,4 +23,9 @@ public class UpdateTaskDTO {
     private String content;
 
     private LocalDateTime dueDate;
+
+    @NotBlank
+    private String statusTypeId;
+
+    private Long userId;
 }

@@ -43,7 +43,7 @@ public class UserService {
     @Transactional
     public UserDTO updateUser(UpdateUserDTO dto, Long id) {
         if (dto.getUsername() == null && dto.getBirthDate() == null && dto.getIsInternal() == null) {
-            throw new NoFieldsProvidedException("At least one field must be provided for update");
+            throw new NoFieldsProvidedException("At least one field must be provided for user update");
         }
 
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(User.class, id));

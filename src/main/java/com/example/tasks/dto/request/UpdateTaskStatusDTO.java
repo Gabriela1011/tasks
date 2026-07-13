@@ -8,5 +8,5 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class UpdateTaskStatusDTO {
-    @NotBlank private String status;
+    @NotBlank private String statusTypeId;
 }

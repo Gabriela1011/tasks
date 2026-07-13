@@ -1,7 +1,5 @@
 package com.example.tasks.dto.response;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,15 +11,17 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class TaskDTO {
-    @NotNull
-    private Long id;
-
-    @NotBlank
+    private Long taskId;
+    private String taskName;
     private String content;
-
-    @NotNull
     private LocalDateTime dueDate;
-
-    @NotBlank
-    private String status;
+    private String statusTypeId;
+    private String statusName;
+    private Long userId;
+    private String username;
+    private String createdBy;
+    private LocalDateTime creationDate;
+    private String lastUpdatedBy;
+    private LocalDateTime lastUpdateDate;
+    private String createdByFullname;
 }

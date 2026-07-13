@@ -1,28 +1,50 @@
 package com.example.tasks.service;
 
+import com.example.tasks.domain.StatusType;
 import com.example.tasks.domain.Task;
-import com.example.tasks.dto.request.UpdateTaskContentDTO;
+import com.example.tasks.domain.User;
+import com.example.tasks.dto.request.CreateTaskDTO;
 import com.example.tasks.dto.request.UpdateTaskDTO;
 import com.example.tasks.dto.request.UpdateTaskStatusDTO;
 import com.example.tasks.dto.response.TaskDTO;
 import com.example.tasks.exception.NoFieldsProvidedException;
 import com.example.tasks.exception.ResourceNotFoundException;
+import com.example.tasks.mapper.TaskMapper;
+import com.example.tasks.repository.StatusTypeRepository;
+import com.example.tasks.repository.TaskRepository;
+import com.example.tasks.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class TaskService {
-    private List<TaskDTO> tasks = new ArrayList<>();
+    private final TaskRepository taskRepository;
+    private final StatusTypeRepository statusTypeRepository;
+    private final UserRepository userRepository;
+    private final TaskMapper taskMapper;
 
     public List<TaskDTO> getTasks() {
         log.info("Getting tasks: ");
-        return tasks;
+        return taskRepository.findAll()
+                .stream()
+                .map(taskMapper::toDto)
+                .toList();
+    }
+
+    public TaskDTO getTaskById(Long id) {
+        Task task = findTaskOrThrow(id);
+
+        log.info("Found task with id {}", id);
+        return taskMapper.toDto(task);
     }
 
     public List<TaskDTO> searchTasks(LocalDateTime dueBefore, String status) {
@@ -33,102 +55,120 @@ public class TaskService {
             throw new NoFieldsProvidedException("At least one search criterion must be provided");
         }
 
-        List<TaskDTO> filteredTasks = tasks.stream()
-                                .filter(task -> !hasDueBefore || task.getDueDate().isBefore(dueBefore))
-                                .filter(task -> !hasStatus || task.getStatus().equals(status))
+        List<Task> foundTasks;
+        if(hasDueBefore && hasStatus){
+            foundTasks = taskRepository.findByDueDateBeforeAndStatusType_StatusName(dueBefore, status);
+        } else if (hasDueBefore) {
+            foundTasks = taskRepository.findByDueDateBefore(dueBefore);
+        } else {
+            foundTasks = taskRepository.findByStatusType_StatusName(status);
+        }
+
+        List<TaskDTO> filteredTasks = foundTasks.stream()
+                                .map(taskMapper::toDto)
                                 .toList();
 
         log.info("Found {} tasks matching search criteria", filteredTasks.size());
         return filteredTasks;
     }
 
-    public TaskDTO getTaskById(Long id) {
-        TaskDTO existingTask = findTaskOrThrow(id);
 
-        log.info("Found task with id {}: {}", id, existingTask);
-        return existingTask;
+    @Transactional
+    public TaskDTO addTask(CreateTaskDTO dto) {
+        StatusType statusType = findStatusTypeOrThrow(dto.getStatusTypeId());
+        User user = (dto.getUserId() != null) ? findUserOrThrow(dto.getUserId()) : null;
+
+        Task task = taskMapper.toEntity(dto, statusType, user);
+        Task savedTask = taskRepository.save(task);
+
+        log.info("Added task: {}", savedTask);
+        return taskMapper.toDto(savedTask);
     }
 
-    public TaskDTO addTask(TaskDTO taskDTO) {
-        TaskDTO builtTask = buildTask(taskDTO);
-        tasks.add(builtTask);
+    @Transactional
+    public List<TaskDTO> addTasks(List<CreateTaskDTO> dtos) {
+        List<Task> tasks = dtos.stream()
+                .map(dto -> {
+                    StatusType statusType = findStatusTypeOrThrow(dto.getStatusTypeId());
+                    User user = (dto.getUserId() != null) ? findUserOrThrow(dto.getUserId()) : null;
+                    return taskMapper.toEntity(dto, statusType, user);
+                })
+                .toList();
 
-        log.info("Added task: {}", builtTask);
-        return builtTask;
+        List<Task> savedTasks = taskRepository.saveAll(tasks);
+
+        log.info("Added {} tasks", savedTasks.size());
+        return savedTasks.stream().map(taskMapper::toDto).toList();
     }
 
-    public List<TaskDTO> addTasks(List<TaskDTO> tasksList) {
-        List<TaskDTO> createdTasks = new ArrayList<>();
-
-        for(TaskDTO task : tasksList) {
-            TaskDTO builtTask = buildTask(task);
-            tasks.add(builtTask);
-            createdTasks.add(builtTask);
+    @Transactional
+    public TaskDTO updateTask(UpdateTaskDTO dto, Long id) {
+        if (dto.getTaskName() == null && dto.getContent() == null && dto.getDueDate() == null) {
+            throw new NoFieldsProvidedException("At least one field must be provided for task update");
         }
 
-        log.info("Added tasks: {}", createdTasks);
-        return createdTasks;
+        Task task = findTaskOrThrow(id);
+
+        Optional.ofNullable(dto.getTaskName()).ifPresent(task::setTaskName);
+        Optional.ofNullable(dto.getContent()).ifPresent(task::setContent);
+        Optional.ofNullable(dto.getDueDate()).ifPresent(task::setDueDate);
+
+        log.info("Updated task with id {}", id);
+        return taskMapper.toDto(task);
     }
 
-    public TaskDTO updateTask(UpdateTaskDTO task, Long id) {
-        TaskDTO existingTask = findTaskOrThrow(id);
-        existingTask.setContent(task.getContent());
-        existingTask.setDueDate(task.getDueDate());
-        existingTask.setStatus(task.getStatus());
+    @Transactional
+    public TaskDTO updateTaskStatus(UpdateTaskStatusDTO dto, Long id) {
+        Task task = findTaskOrThrow(id);
+        StatusType newStatus = findStatusTypeOrThrow(dto.getStatusTypeId());
 
-        log.info("Updated task with id {}: {}", id, existingTask);
-        return existingTask;
+        // TODO: validate allowed status transitions (currentStatus -> newStatus)
+
+        task.setStatusType(newStatus);
+
+        log.info("Updated task status with id {}: {}", id, task);
+        return taskMapper.toDto(task);
     }
 
-    public TaskDTO updateTaskContent(UpdateTaskContentDTO task, Long id) {
-        TaskDTO existingTask = findTaskOrThrow(id);
-        existingTask.setContent(task.getContent());
-
-        log.info("Updated task content with id {}: {}", id, existingTask);
-        return existingTask;
-    }
-
-    public TaskDTO updateTaskStatus(UpdateTaskStatusDTO task, Long id) {
-        TaskDTO existingTask = findTaskOrThrow(id);
-        existingTask.setStatus(task.getStatus());
-
-        log.info("Updated task status with id {}: {}", id, existingTask);
-        return existingTask;
-    }
-
+    @Transactional
     public void deleteTask(Long id) {
-        boolean removed = tasks.removeIf(task -> task.getId().equals(id));
-
-        if(!removed){
-            log.warn("Task with id {} not found for deletion", id);
+        if (!taskRepository.existsById(id)) {
             throw new ResourceNotFoundException(Task.class, id);
         }
+        taskRepository.deleteById(id);
 
         log.info("Deleted task with id {}", id);
     }
 
+    @Transactional
     public void deleteAllTasks() {
-        int deletedCount = tasks.size();
-        tasks.clear();
+        long deletedCount = taskRepository.count();
+        taskRepository.deleteAll();
         log.info("Deleted all tasks. Count: {}", deletedCount);
     }
 
-    private TaskDTO buildTask(TaskDTO task) {
-        return TaskDTO.builder()
-                .id(task.getId())
-                .content(task.getContent())
-                .dueDate(task.getDueDate())
-                .status(task.getStatus())
-                .build();
+
+    private Task findTaskOrThrow(Long id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> {
+                        log.warn("Task with id {} not found", id);
+                        return new ResourceNotFoundException(Task.class, id);
+                });
     }
 
-    private TaskDTO findTaskOrThrow(Long id) {
-        return tasks.stream()
-                .filter(task -> task.getId().equals(id))
-                .findFirst()
+    private StatusType findStatusTypeOrThrow(String statusTypeId) {
+        return statusTypeRepository.findById(statusTypeId)
                 .orElseThrow(() -> {
-                    log.warn("Task with id {} not found", id);
-                    return new ResourceNotFoundException(Task.class, id);
+                    log.warn("Status with id {} not found", statusTypeId);
+                    return new ResourceNotFoundException(StatusType.class, statusTypeId);
+                });
+    }
+
+    private User findUserOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("User with id {} not found", userId);
+                    return new ResourceNotFoundException(User.class, userId);
                 });
     }
 }
