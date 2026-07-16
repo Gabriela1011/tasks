@@ -1,9 +1,10 @@
 package com.example.tasks.service;
 
 import com.example.tasks.domain.User;
-import com.example.tasks.dto.request.CreateUserDTO;
+import com.example.tasks.dto.request.RegisterUserDTO;
 import com.example.tasks.dto.request.UpdateUserDTO;
 import com.example.tasks.dto.response.UserDTO;
+import com.example.tasks.dto.response.UserDetailsDTO;
 import com.example.tasks.exception.DuplicateEmailException;
 import com.example.tasks.exception.NoFieldsProvidedException;
 import com.example.tasks.exception.ResourceNotFoundException;
@@ -33,7 +34,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO createUser(CreateUserDTO dto){
+    public UserDetailsDTO createUser(RegisterUserDTO dto){
         if(userRepository.existsByEmail(dto.getEmail())) {
             throw new DuplicateEmailException(dto.getEmail());
         }
@@ -42,7 +43,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         log.info("User created!");
-        return userMapper.toDto(savedUser);
+        return userMapper.toUserDetailsDTO(savedUser);
     }
 
     @Transactional

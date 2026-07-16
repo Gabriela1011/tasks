@@ -1,8 +1,9 @@
 package com.example.tasks.mapper;
 
 import com.example.tasks.domain.User;
-import com.example.tasks.dto.request.CreateUserDTO;
+import com.example.tasks.dto.request.RegisterUserDTO;
 import com.example.tasks.dto.response.UserDTO;
+import com.example.tasks.dto.response.UserDetailsDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,13 +23,20 @@ public class UserMapper {
                 .build();
     }
 
-    public User toEntity(CreateUserDTO dto) {
+    public User toEntity(RegisterUserDTO dto) {
         return User.builder()
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .username(dto.getUsername())
                 .birthDate(dto.getBirthDate())
-                .isInternal(dto.getIsInternal() != null ? dto.getIsInternal() : true)
+                .build();
+    }
+
+    public UserDetailsDTO toUserDetailsDTO(User user) {
+        return UserDetailsDTO.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .email(user.getEmail())
                 .build();
     }
 }

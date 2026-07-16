@@ -1,8 +1,9 @@
 package com.example.tasks.controller;
 
-import com.example.tasks.dto.request.CreateUserDTO;
+import com.example.tasks.dto.request.RegisterUserDTO;
 import com.example.tasks.dto.request.UpdateUserDTO;
 import com.example.tasks.dto.response.UserDTO;
+import com.example.tasks.dto.response.UserDetailsDTO;
 import com.example.tasks.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,9 +27,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+
+    //TODO: de mutat in AuthController
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO user) {
-        UserDTO createdUser = userService.createUser(user);
+    public ResponseEntity<UserDetailsDTO> createUser(@Valid @RequestBody RegisterUserDTO user) {
+        UserDetailsDTO createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
