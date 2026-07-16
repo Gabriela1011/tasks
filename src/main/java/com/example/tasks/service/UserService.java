@@ -4,6 +4,7 @@ import com.example.tasks.domain.User;
 import com.example.tasks.dto.request.CreateUserDTO;
 import com.example.tasks.dto.request.UpdateUserDTO;
 import com.example.tasks.dto.response.UserDTO;
+import com.example.tasks.exception.DuplicateEmailException;
 import com.example.tasks.exception.NoFieldsProvidedException;
 import com.example.tasks.exception.ResourceNotFoundException;
 import com.example.tasks.mapper.UserMapper;
@@ -33,6 +34,10 @@ public class UserService {
 
     @Transactional
     public UserDTO createUser(CreateUserDTO dto){
+        if(userRepository.existsByEmail(dto.getEmail())) {
+            throw new DuplicateEmailException(dto.getEmail());
+        }
+
         User user = userMapper.toEntity(dto);
         User savedUser = userRepository.save(user);
 

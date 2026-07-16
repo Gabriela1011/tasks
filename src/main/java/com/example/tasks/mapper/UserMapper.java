@@ -24,6 +24,8 @@ public class UserMapper {
 
     public User toEntity(CreateUserDTO dto) {
         return User.builder()
+                .email(dto.getEmail())
+                .password(dto.getPassword())
                 .username(dto.getUsername())
                 .birthDate(dto.getBirthDate())
                 .isInternal(dto.getIsInternal() != null ? dto.getIsInternal() : true)
