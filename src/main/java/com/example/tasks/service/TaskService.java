@@ -13,13 +13,16 @@ import com.example.tasks.exception.ResourceNotFoundException;
 import com.example.tasks.mapper.TaskMapper;
 import com.example.tasks.repository.StatusTypeRepository;
 import com.example.tasks.repository.TaskRepository;
+import com.example.tasks.repository.TaskSpecifications;
 import com.example.tasks.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -48,28 +51,48 @@ public class TaskService {
         return taskMapper.toDto(task);
     }
 
-    public List<TaskDTO> searchTasks(LocalDateTime dueBefore, String status) {
-        boolean hasDueBefore = (dueBefore != null);
+    public List<TaskDTO> searchTasks(String taskName, Long userId, String status, LocalDate dueDate) {
+        boolean hasTaskName = StringUtils.hasText(taskName);
+        boolean hasUserId = (userId != null);
         boolean hasStatus = StringUtils.hasText(status);
+        boolean hasDueDate = (dueDate != null);
 
-        if(!hasDueBefore && !hasStatus) {
+        if (!hasTaskName && !hasUserId && !hasStatus && !hasDueDate) {
             throw new NoFieldsProvidedException("At least one search criterion must be provided");
         }
 
-        List<Task> foundTasks;
-        if(hasDueBefore && hasStatus){
-            foundTasks = taskRepository.findByDueDateBeforeAndStatusType_StatusName(dueBefore, status);
-        } else if (hasDueBefore) {
-            foundTasks = taskRepository.findByDueDateBefore(dueBefore);
-        } else {
-            foundTasks = taskRepository.findByStatusType_StatusName(status);
+        Specification<Task> spec = TaskSpecifications.fetchAssociations();
+
+        if (hasTaskName) {
+            spec = spec.and(TaskSpecifications.hasTaskNameLike(taskName));
+        }
+        if (hasUserId) {
+            spec = spec.and(TaskSpecifications.hasUserId(userId));
+        }
+        if (hasStatus) {
+            spec = spec.and(TaskSpecifications.hasStatus(status));
+        }
+        if (hasDueDate) {
+            spec = spec.and(TaskSpecifications.hasDueDateOn(dueDate));
         }
 
-        List<TaskDTO> filteredTasks = foundTasks.stream()
-                                .map(taskMapper::toDto)
-                                .toList();
+        List<TaskDTO> filteredTasks = taskRepository.findAll(spec).stream()
+                .map(taskMapper::toDto)
+                .toList();
 
         log.info("Found {} tasks matching search criteria", filteredTasks.size());
+        return filteredTasks;
+    }
+
+    public List<TaskDTO> searchTasksDueBefore(LocalDateTime dueBefore) {
+        Specification<Task> spec = TaskSpecifications.fetchAssociations()
+                .and(TaskSpecifications.hasDueDateBefore(dueBefore));
+
+        List<TaskDTO> filteredTasks = taskRepository.findAll(spec).stream()
+                .map(taskMapper::toDto)
+                .toList();
+
+        log.info("Found {} tasks due before {}", filteredTasks.size(), dueBefore);
         return filteredTasks;
     }
 

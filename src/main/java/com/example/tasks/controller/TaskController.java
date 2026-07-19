@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,10 +37,17 @@ public class TaskController {
 
     @GetMapping("/search")
     public ResponseEntity<List<TaskDTO>> searchTasks(
-            @RequestParam(required = false) LocalDateTime dueBefore,
-            @RequestParam(required = false) String status) {
+            @RequestParam(required = false) String taskName,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) LocalDate dueDate) {
 
-        return ResponseEntity.ok(taskService.searchTasks(dueBefore, status));
+        return ResponseEntity.ok(taskService.searchTasks(taskName, userId, status, dueDate));
+    }
+
+    @GetMapping("/due-before")
+    public ResponseEntity<List<TaskDTO>> getTasksDueBefore(@RequestParam LocalDateTime dueBefore) {
+        return ResponseEntity.ok(taskService.searchTasksDueBefore(dueBefore));
     }
 
     @GetMapping("/users/{userId}/status-counts")
