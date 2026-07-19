@@ -20,5 +20,6 @@ public class UpdateUserDTO {
     @Past
     private LocalDate birthDate;
 
-    private Boolean isInternal;
+    //TODO: add another endpoint PATCH /users/{id}/promote once auth exists
+    //private Boolean isInternal;
 }

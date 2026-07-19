@@ -41,8 +41,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(httpStatus).body(error);
     }
 
-    @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateEmailException(DuplicateEmailException ex) {
+    @ExceptionHandler(DuplicateFieldException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateFieldException(DuplicateFieldException ex) {
         HttpStatus httpStatus = HttpStatus.CONFLICT;
         ErrorResponse error = buildErrorResponse(httpStatus, ex.getMessage());
 

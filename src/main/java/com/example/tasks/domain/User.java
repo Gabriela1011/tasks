@@ -27,16 +27,16 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "username", length = 500, nullable = false)
+    @Column(name = "username", length = 500, nullable = false, unique = true)
     private String username;
 
-    @Column(name = "birth_date")
+    @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
     @Convert(converter = NumericBooleanConverter.class)
     @Column(name = "is_internal", nullable = false)
     @Builder.Default
-    private Boolean isInternal = true;
+    private Boolean isInternal = false;
 
     @Column(name = "created_by", length = 50, nullable = false, updatable = false)
     private String createdBy;

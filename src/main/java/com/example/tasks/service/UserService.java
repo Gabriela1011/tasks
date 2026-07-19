@@ -5,7 +5,7 @@ import com.example.tasks.dto.request.RegisterUserDTO;
 import com.example.tasks.dto.request.UpdateUserDTO;
 import com.example.tasks.dto.response.UserDTO;
 import com.example.tasks.dto.response.UserDetailsDTO;
-import com.example.tasks.exception.DuplicateEmailException;
+import com.example.tasks.exception.DuplicateFieldException;
 import com.example.tasks.exception.NoFieldsProvidedException;
 import com.example.tasks.exception.ResourceNotFoundException;
 import com.example.tasks.mapper.UserMapper;
@@ -36,7 +36,11 @@ public class UserService {
     @Transactional
     public UserDetailsDTO createUser(RegisterUserDTO dto){
         if(userRepository.existsByEmail(dto.getEmail())) {
-            throw new DuplicateEmailException(dto.getEmail());
+            throw new DuplicateFieldException(User.class, "email", dto.getEmail());
+        }
+
+        if(userRepository.existsByUsername(dto.getUsername())) {
+            throw new DuplicateFieldException(User.class, "username", dto.getUsername());
         }
 
         User user = userMapper.toEntity(dto);
@@ -48,15 +52,19 @@ public class UserService {
 
     @Transactional
     public UserDTO updateUser(UpdateUserDTO dto, Long id) {
-        if (dto.getUsername() == null && dto.getBirthDate() == null && dto.getIsInternal() == null) {
+        if (dto.getUsername() == null && dto.getBirthDate() == null) {
             throw new NoFieldsProvidedException("At least one field must be provided for user update");
         }
 
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(User.class, id));
 
-        Optional.ofNullable(dto.getUsername()).ifPresent(user::setUsername);
+        Optional.ofNullable(dto.getUsername()).ifPresent(newUsername -> {
+            if (!newUsername.equals(user.getUsername()) && userRepository.existsByUsername(newUsername)) {
+                throw new DuplicateFieldException(User.class, "username", newUsername);
+            }
+            user.setUsername(newUsername);
+        });
         Optional.ofNullable(dto.getBirthDate()).ifPresent(user::setBirthDate);
-        Optional.ofNullable(dto.getIsInternal()).ifPresent(user::setIsInternal);
 
         log.info("Updated user with id {}: {}", id, user);
         return userMapper.toDto(user);
