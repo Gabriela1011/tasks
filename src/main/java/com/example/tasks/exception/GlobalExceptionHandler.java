@@ -57,6 +57,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(httpStatus).body(error);
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+        HttpStatus httpStatus = HttpStatus.FORBIDDEN;
+        ErrorResponse error = buildErrorResponse(httpStatus, ex.getMessage());
+
+        return ResponseEntity.status(httpStatus).body(error);
+    }
+
     @ExceptionHandler(InvalidDateRangeException.class)
     public ResponseEntity<ErrorResponse> handleInvalidDateRangeException(InvalidDateRangeException ex) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;

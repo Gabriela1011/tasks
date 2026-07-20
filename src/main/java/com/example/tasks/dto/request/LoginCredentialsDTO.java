@@ -1,6 +1,5 @@
 package com.example.tasks.dto.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -12,7 +11,6 @@ import lombok.*;
 @ToString
 public class LoginCredentialsDTO {
     @NotBlank
-    @Email
     private String email;
 
     @NotBlank

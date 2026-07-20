@@ -1,10 +1,8 @@
 package com.example.tasks.service;
 
 import com.example.tasks.domain.User;
-import com.example.tasks.dto.request.RegisterUserDTO;
 import com.example.tasks.dto.request.UpdateUserDTO;
 import com.example.tasks.dto.response.UserDTO;
-import com.example.tasks.dto.response.UserDetailsDTO;
 import com.example.tasks.dto.response.UserSummaryDTO;
 import com.example.tasks.exception.DuplicateFieldException;
 import com.example.tasks.exception.NoFieldsProvidedException;
@@ -39,22 +37,23 @@ public class UserService {
         return userRepository.findAllAsUserSummary();
     }
 
-    @Transactional
-    public UserDetailsDTO createUser(RegisterUserDTO dto){
-        if(userRepository.existsByEmail(dto.getEmail())) {
-            throw new DuplicateFieldException(User.class, "email", dto.getEmail());
-        }
-
-        if(userRepository.existsByUsername(dto.getUsername())) {
-            throw new DuplicateFieldException(User.class, "username", dto.getUsername());
-        }
-
-        User user = userMapper.toEntity(dto);
-        User savedUser = userRepository.save(user);
-
-        log.info("User created!");
-        return userMapper.toUserDetailsDTO(savedUser);
-    }
+    //TODO:REVIEW
+//    @Transactional
+//    public UserDetailsDTO createUser(RegisterUserDTO dto){
+//        if(userRepository.existsByEmail(dto.getEmail())) {
+//            throw new DuplicateFieldException(User.class, "email", dto.getEmail());
+//        }
+//
+//        if(userRepository.existsByUsername(dto.getUsername())) {
+//            throw new DuplicateFieldException(User.class, "username", dto.getUsername());
+//        }
+//
+//        User user = userMapper.toEntity(dto);
+//        User savedUser = userRepository.save(user);
+//
+//        log.info("User created!");
+//        return userMapper.toUserDetailsDTO(savedUser);
+//    }
 
     @Transactional
     public UserDTO updateUser(UpdateUserDTO dto, Long id) {
