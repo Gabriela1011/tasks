@@ -38,11 +38,12 @@ public class TaskController {
     @GetMapping("/search")
     public ResponseEntity<List<TaskDTO>> searchTasks(
             @RequestParam(required = false) String taskName,
-            @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) LocalDate dueDate) {
+            @RequestParam(required = false) List<Long> userIds,
+            @RequestParam(required = false) List<String> statuses,
+            @RequestParam(required = false) LocalDate dueDateFrom,
+            @RequestParam(required = false) LocalDate dueDateTo) {
 
-        return ResponseEntity.ok(taskService.searchTasks(taskName, userId, status, dueDate));
+        return ResponseEntity.ok(taskService.searchTasks(taskName, userIds, statuses, dueDateFrom, dueDateTo));
     }
 
     @GetMapping("/due-before")

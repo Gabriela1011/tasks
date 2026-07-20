@@ -51,13 +51,13 @@ public class TaskService {
         return taskMapper.toDto(task);
     }
 
-    public List<TaskDTO> searchTasks(String taskName, Long userId, String status, LocalDate dueDate) {
+    public List<TaskDTO> searchTasks(String taskName, List<Long> userIds, List<String> statuses, LocalDate dueDateFrom, LocalDate dueDateTo) {
         boolean hasTaskName = StringUtils.hasText(taskName);
-        boolean hasUserId = (userId != null);
-        boolean hasStatus = StringUtils.hasText(status);
-        boolean hasDueDate = (dueDate != null);
+        boolean hasUserIds = (userIds != null && !userIds.isEmpty());
+        boolean hasStatuses = (statuses != null && !statuses.isEmpty());
+        boolean hasDueDateFrom = (dueDateFrom != null);
 
-        if (!hasTaskName && !hasUserId && !hasStatus && !hasDueDate) {
+        if (!hasTaskName && !hasUserIds && !hasStatuses && !hasDueDateFrom) {
             throw new NoFieldsProvidedException("At least one search criterion must be provided");
         }
 
@@ -66,14 +66,14 @@ public class TaskService {
         if (hasTaskName) {
             spec = spec.and(TaskSpecifications.hasTaskNameLike(taskName));
         }
-        if (hasUserId) {
-            spec = spec.and(TaskSpecifications.hasUserId(userId));
+        if (hasUserIds) {
+            spec = spec.and(TaskSpecifications.hasUserIdIn(userIds));
         }
-        if (hasStatus) {
-            spec = spec.and(TaskSpecifications.hasStatus(status));
+        if (hasStatuses) {
+            spec = spec.and(TaskSpecifications.hasStatusIn(statuses));
         }
-        if (hasDueDate) {
-            spec = spec.and(TaskSpecifications.hasDueDateOn(dueDate));
+        if (hasDueDateFrom) {
+            spec = spec.and(TaskSpecifications.hasDueDateBetween(dueDateFrom, dueDateTo));
         }
 
         List<TaskDTO> filteredTasks = taskRepository.findAll(spec).stream()

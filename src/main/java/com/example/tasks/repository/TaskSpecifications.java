@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class TaskSpecifications {
 
@@ -17,26 +18,27 @@ public class TaskSpecifications {
         return (root, query, cb) -> cb.like(cb.lower(root.get("taskName")), pattern);
     }
 
-    public static Specification<Task> hasUserId(Long userId) {
-        return (root, query, cb) -> cb.equal(root.get("user").get("userId"), userId);
+    public static Specification<Task> hasUserIdIn(List<Long> userIds) {
+        return (root, query, cb) -> root.get("user").get("userId").in(userIds);
     }
 
-    public static Specification<Task> hasStatus(String statusName) {
-        return (root, query, cb) -> cb.equal(root.get("statusType").get("statusName"), statusName);
+    public static Specification<Task> hasStatusIn(List<String> statuses) {
+        return (root, query, cb) -> root.get("statusType").get("statusName").in(statuses);
     }
 
     public static Specification<Task> hasDueDateBefore(LocalDateTime dueBefore) {
         return (root, query, cb) -> cb.lessThan(root.get("dueDate"), dueBefore);
     }
 
-    public static Specification<Task> hasDueDateOn(LocalDate dueDate) {
-        LocalDateTime startOfDay = dueDate.atStartOfDay();
-        LocalDateTime startOfNextDay = startOfDay.plusDays(1);
+    public static Specification<Task> hasDueDateBetween(LocalDate from, LocalDate to) {
+        return (root, query, cb) -> {
+            LocalDate effectiveTo = (to != null) ? to : from;
 
-        return (root, query, cb) -> cb.and(
-                cb.greaterThanOrEqualTo(root.get("dueDate"), startOfDay),
-                cb.lessThan(root.get("dueDate"), startOfNextDay)
-        );
+            return cb.and(
+                    cb.greaterThanOrEqualTo(root.get("dueDate"), from.atStartOfDay()),
+                    cb.lessThan(root.get("dueDate"), effectiveTo.plusDays(1).atStartOfDay())
+            );
+        };
     }
 
     // Mirrors the @EntityGraph(attributePaths = {"statusType", "user"})
