@@ -1,6 +1,7 @@
 package com.example.tasks.repository;
 
 import com.example.tasks.domain.Task;
+import com.example.tasks.exception.InvalidDateRangeException;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -31,9 +32,14 @@ public class TaskSpecifications {
     }
 
     public static Specification<Task> hasDueDateBetween(LocalDate from, LocalDate to) {
+        if (from != null && to != null && to.isBefore(from)) {
+            throw new InvalidDateRangeException();
+        }
+
         return (root, query, cb) -> {
             LocalDate effectiveTo = (to != null) ? to : from;
 
+            assert from != null;
             return cb.and(
                     cb.greaterThanOrEqualTo(root.get("dueDate"), from.atStartOfDay()),
                     cb.lessThan(root.get("dueDate"), effectiveTo.plusDays(1).atStartOfDay())

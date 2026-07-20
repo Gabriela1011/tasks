@@ -57,6 +57,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(httpStatus).body(error);
     }
 
+    @ExceptionHandler(InvalidDateRangeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidDateRangeException(InvalidDateRangeException ex) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = buildErrorResponse(httpStatus, ex.getMessage());
+
+        return ResponseEntity.status(httpStatus).body(error);
+    }
+
     private ErrorResponse buildErrorResponse(HttpStatus httpStatus, String message) {
         return ErrorResponse.builder()
                 .status(httpStatus.value())
