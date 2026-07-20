@@ -5,6 +5,7 @@ import com.example.tasks.dto.request.RegisterUserDTO;
 import com.example.tasks.dto.request.UpdateUserDTO;
 import com.example.tasks.dto.response.UserDTO;
 import com.example.tasks.dto.response.UserDetailsDTO;
+import com.example.tasks.dto.response.UserSummaryDTO;
 import com.example.tasks.exception.DuplicateFieldException;
 import com.example.tasks.exception.NoFieldsProvidedException;
 import com.example.tasks.exception.ResourceNotFoundException;
@@ -31,6 +32,11 @@ public class UserService {
                 .stream()
                 .map(userMapper::toDto)
                 .toList();
+    }
+
+    public List<UserSummaryDTO> getUserSummaries() {
+        log.info("User summaries retrieved!");
+        return userRepository.findAllAsUserSummary();
     }
 
     @Transactional

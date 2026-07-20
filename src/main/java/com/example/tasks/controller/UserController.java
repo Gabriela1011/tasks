@@ -2,6 +2,7 @@ package com.example.tasks.controller;
 
 import com.example.tasks.dto.request.UpdateUserDTO;
 import com.example.tasks.dto.response.UserDTO;
+import com.example.tasks.dto.response.UserSummaryDTO;
 import com.example.tasks.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,11 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<List<UserSummaryDTO>> getUserSummaries() {
+        return ResponseEntity.ok(userService.getUserSummaries());
     }
 
     @PatchMapping("/{id}")
