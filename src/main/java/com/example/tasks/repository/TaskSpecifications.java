@@ -24,7 +24,7 @@ public class TaskSpecifications {
     }
 
     public static Specification<Task> hasStatusIn(List<String> statuses) {
-        return (root, query, cb) -> root.get("statusType").get("statusName").in(statuses);
+        return (root, query, cb) -> root.get("statusType").get("statusTypeId").in(statuses);
     }
 
     public static Specification<Task> hasDueDateBefore(LocalDateTime dueBefore) {
