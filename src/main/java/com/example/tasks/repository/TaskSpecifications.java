@@ -37,11 +37,11 @@ public class TaskSpecifications {
         }
 
         return (root, query, cb) -> {
+            LocalDate effectiveFrom = (from != null) ? from : to;
             LocalDate effectiveTo = (to != null) ? to : from;
 
-            assert from != null;
             return cb.and(
-                    cb.greaterThanOrEqualTo(root.get("dueDate"), from.atStartOfDay()),
+                    cb.greaterThanOrEqualTo(root.get("dueDate"), effectiveFrom.atStartOfDay()),
                     cb.lessThan(root.get("dueDate"), effectiveTo.plusDays(1).atStartOfDay())
             );
         };

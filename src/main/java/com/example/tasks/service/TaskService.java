@@ -56,8 +56,9 @@ public class TaskService {
         boolean hasUserIds = (userIds != null && !userIds.isEmpty());
         boolean hasStatuses = (statuses != null && !statuses.isEmpty());
         boolean hasDueDateFrom = (dueDateFrom != null);
+        boolean hasDueDateTo = (dueDateTo != null);
 
-        if (!hasTaskName && !hasUserIds && !hasStatuses && !hasDueDateFrom) {
+        if (!hasTaskName && !hasUserIds && !hasStatuses && !hasDueDateFrom && !hasDueDateTo) {
             throw new NoFieldsProvidedException("At least one search criterion must be provided");
         }
 
@@ -72,7 +73,7 @@ public class TaskService {
         if (hasStatuses) {
             spec = spec.and(TaskSpecifications.hasStatusIn(statuses));
         }
-        if (hasDueDateFrom) {
+        if (hasDueDateFrom || hasDueDateTo) {
             spec = spec.and(TaskSpecifications.hasDueDateBetween(dueDateFrom, dueDateTo));
         }
 
