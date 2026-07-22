@@ -37,24 +37,6 @@ public class UserService {
         return userRepository.findAllAsUserSummary();
     }
 
-    //TODO:REVIEW
-//    @Transactional
-//    public UserDetailsDTO createUser(RegisterUserDTO dto){
-//        if(userRepository.existsByEmail(dto.getEmail())) {
-//            throw new DuplicateFieldException(User.class, "email", dto.getEmail());
-//        }
-//
-//        if(userRepository.existsByUsername(dto.getUsername())) {
-//            throw new DuplicateFieldException(User.class, "username", dto.getUsername());
-//        }
-//
-//        User user = userMapper.toEntity(dto);
-//        User savedUser = userRepository.save(user);
-//
-//        log.info("User created!");
-//        return userMapper.toUserDetailsDTO(savedUser);
-//    }
-
     @Transactional
     public UserDTO updateUser(UpdateUserDTO dto, Long id) {
         if (dto.getUsername() == null && dto.getBirthDate() == null) {

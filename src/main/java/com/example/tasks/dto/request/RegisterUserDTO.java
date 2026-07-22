@@ -14,7 +14,6 @@ import java.time.LocalDate;
 public class RegisterUserDTO {
 
     @NotBlank
-    @Email
     private String email;
 
     @NotBlank

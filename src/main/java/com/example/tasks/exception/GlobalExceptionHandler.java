@@ -73,6 +73,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(httpStatus).body(error);
     }
 
+    @ExceptionHandler(InvalidEmailFormatException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidEmailFormatException(InvalidEmailFormatException ex) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = buildErrorResponse(httpStatus, ex.getMessage());
+        return ResponseEntity.status(httpStatus).body(error);
+    }
+
     private ErrorResponse buildErrorResponse(HttpStatus httpStatus, String message) {
         return ErrorResponse.builder()
                 .status(httpStatus.value())
