@@ -17,6 +17,7 @@ import com.example.tasks.repository.TaskSpecifications;
 import com.example.tasks.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,9 @@ public class TaskService {
     private final StatusTypeRepository statusTypeRepository;
     private final UserRepository userRepository;
     private final TaskMapper taskMapper;
+
+    @Value("${status.completed.id}")
+    private String completedStatusId;
 
     public List<TaskDTO> getTasks() {
         log.info("Getting tasks: ");
@@ -105,6 +109,13 @@ public class TaskService {
         List<StatusCountDTO> result = taskRepository.countTasksByStatusForUser(userId);
         log.info("User {} has tasks in {} distinct statuses", userId, result.size());
         return result;
+    }
+
+    public List<Long> getOverdueTaskIds() {
+        List<Long> overdueIds = taskRepository.findOverdueTaskIds(LocalDateTime.now(), completedStatusId);
+
+        log.info("Found {} overdue tasks", overdueIds.size());
+        return overdueIds;
     }
 
 

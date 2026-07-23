@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +32,8 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
        GROUP BY t.statusType.statusName
        """)
     List<StatusCountDTO> countTasksByStatusForUser(@Param("userId") Long userId);
+
+
+    @Query("SELECT t.taskId FROM Task t WHERE t.dueDate < :now AND t.statusType.statusTypeId != :completedStatusId")
+    List<Long> findOverdueTaskIds(@Param("now") LocalDateTime now, @Param("completedStatusId") String completedStatusId);
 }
