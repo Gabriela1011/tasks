@@ -3,6 +3,7 @@ package com.example.tasks.service;
 import com.example.tasks.domain.User;
 import com.example.tasks.dto.request.LoginCredentialsDTO;
 import com.example.tasks.dto.request.RegisterUserDTO;
+import com.example.tasks.dto.response.AuthResponseDTO;
 import com.example.tasks.exception.DuplicateFieldException;
 import com.example.tasks.exception.InvalidCredentialsException;
 import com.example.tasks.exception.InvalidEmailFormatException;
@@ -24,7 +25,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    public String login(LoginCredentialsDTO loginCredentialsDTO) throws JoseException {
+    public AuthResponseDTO login(LoginCredentialsDTO loginCredentialsDTO) throws JoseException {
         String email = decodeBase64(loginCredentialsDTO.getEmail());
         String hashedPassword = hashPassword(decodeBase64(loginCredentialsDTO.getPassword()));
 
@@ -34,14 +35,14 @@ public class AuthService {
         });
 
         if (hashedPassword.equals(dbUser.getPassword())) {
-            return jwtService.createToken(email);
+            return new AuthResponseDTO(jwtService.createToken(email));
         }
 
         throw new InvalidCredentialsException();
     }
 
     @Transactional
-    public String register(RegisterUserDTO dto) throws JoseException {
+    public AuthResponseDTO register(RegisterUserDTO dto) throws JoseException {
         String email = decodeBase64(dto.getEmail());
 
         if (!email.matches("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$")) {
@@ -67,7 +68,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return jwtService.createToken(email);
+        return new AuthResponseDTO(jwtService.createToken(email));
     }
 
     private String decodeBase64(String value) {
